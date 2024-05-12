@@ -6,7 +6,7 @@ import { Item } from "./Item";
 import { useAtom } from "jotai";
 import { mapAtom, charactersAtom, userAtom } from "./SocketManager";
 import { useGrid } from '../hooks/useGrid'
-import { cameraFixAtom, teleportPositionAtom, vrSessionAtom } from './Global'
+import { cameraFixAtom, teleportPositionAtom, cameraDistanceAtom } from './Global'
 //import { Vector3 } from 'three';
 import { Interactive, useTeleportation, useXR, useXREvent } from '@react-three/xr'
 //import { useController  } from '@react-three/xr'
@@ -22,7 +22,7 @@ export const Scene = () => {
     const [color, setColor] = useState(0x123456)
     const [cameraFix, setCameraFix] = useAtom(cameraFixAtom);
     const [teleportPosition, setTeleportPosition] = useAtom(teleportPositionAtom);
-    const [vrSession] = useAtom(vrSessionAtom);
+    const [cameraDistance, setCameraDistance] = useAtom(cameraDistanceAtom);
     const { vector3ToGrid3DV3, grid3DToVector3V3 } = useGrid();
     const cameraControls = useRef();
     const [map] = useAtom(mapAtom);
@@ -56,26 +56,26 @@ export const Scene = () => {
     // useXREvent('squeeze', (event) => console.log("left squeeze"), { handedness: 'left' })
     useXREvent('squeeze', (event) => {
         console.log("right squeeze works on Oculus")
-        // const characterScene = scene.getObjectByName(`character-${user}`)
-        // vector3ToGrid3DV3(characterScene.position)
-        // console.log(characterScene.position)
+        setCameraDistance([cameraDistance[0] + 1, cameraDistance[1] + 2])
         const positionAux = vector3ToGrid3DV3(character?.position)
-        //console.log(positionAux)
-        //setTeleportPosition([5, 5, 8])
-        setTeleportPosition([positionAux[0], (positionAux[2] + 3), (positionAux[1] + 7)])
-        //console.log([positionAux[0], (positionAux[2] + 3), (positionAux[1] + 3)])
+        //setTeleportPosition([positionAux[0], (positionAux[2] + 3), (positionAux[1] + 7)])
+        setTeleportPosition([(positionAux[0] / 2), ((positionAux[2] / 2) + cameraDistance[0]), (positionAux[1] / 2) + cameraDistance[1]])
 
     }, { handedness: 'right' })
 
     useXREvent('squeeze', (event) => {
         console.log("left squeeze works on Oculus")
+        setCameraDistance([cameraDistance[0] - 1, cameraDistance[1] - 2])
         // const characterScene = scene.getObjectByName(`character-${user}`)
         // vector3ToGrid3DV3(characterScene.position)
         // console.log(characterScene.position)
         const positionAux = vector3ToGrid3DV3(character?.position)
         //console.log(positionAux)
+        //console.log(positionAux)
         //setTeleportPosition([5, 5, 8])
-        setTeleportPosition([positionAux[0], (positionAux[2]), (positionAux[1])])
+        setTeleportPosition([(positionAux[0] / 2), ((positionAux[2] / 2) + cameraDistance[0]), (positionAux[1] / 2) + cameraDistance[1]])
+        //setTeleportPosition(100, 100, 7)
+
         //console.log([positionAux[0], (positionAux[2] + 3), (positionAux[1] + 3)])
 
     }, { handedness: 'left' })
@@ -148,11 +148,11 @@ export const Scene = () => {
     // }, [cameraTeleport])
     useFrame((_state, delta, frame) => {
         //console.log(squeeze)
-        if (frame && vrSession) {
+        if (frame) {
             if (teleportPosition) {
                 teleport(teleportPosition)
             } else {
-                teleport([0, 1, 5])
+                teleport([100, 100, 5])
             }
 
             //teleport(cameraTeleport)
@@ -167,16 +167,17 @@ export const Scene = () => {
             //console.log(frame)
             //teleport([10, 10, 2])
             //teleport(new Vector3(10, 10, 2))
-        } else {
-            if (character != undefined) {
-                cameraControls.current.setPosition(
-                    character.position.x + 3,
-                    character.position.y + 4,
-                    character.position.z + 3,
-                    true
-                );
-            }
         }
+        // else {
+        //     if (character != undefined) {
+        //         cameraControls.current.setPosition(
+        //             character.position.x + 3,
+        //             character.position.y + 4,
+        //             character.position.z + 3,
+        //             true
+        //         );
+        //     }
+        // }
 
         // if (cameraFix) {
         //     cameraControls.current.setPosition(

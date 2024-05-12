@@ -7,7 +7,8 @@ import { mapAtom, charactersAtom, userAtom, socket } from "./SocketManager";
 import { useThree } from '@react-three/fiber'
 import { Vector3 } from "three";
 import { Interactive, useXREvent, useXR } from '@react-three/xr'
-import { teleportPositionAtom } from './Global'
+import { teleportPositionAtom, cameraDistanceAtom } from './Global'
+
 
 
 
@@ -21,6 +22,7 @@ export const Item = ({ item, ...props }) => {
     const { scene } = useGLTF(`/models/items/${name}.glb`);
     const { controllers } = useXR()
     const [teleportPosition, setTeleportPosition] = useAtom(teleportPositionAtom);
+    const [cameraDistance] = useAtom(cameraDistanceAtom);
     //const { scene } = useGLTF(`/models/items/Crypt.glb`);
 
     //const [onObject, setOnObject] = useState(false);
@@ -75,8 +77,8 @@ export const Item = ({ item, ...props }) => {
         if (e.target.inputSource.handedness === "right") {
             //console.log(e.intersection)
             const positionAux = vector3ToGrid3DV3(e.intersection.point)
-            console.log(vector3ToGrid3DV3(e.intersection.point))
-            setTeleportPosition([positionAux[0], (positionAux[2] + 3), (positionAux[1] + 3)])
+            //console.log(vector3ToGrid3DV3(e.intersection.point))
+            setTeleportPosition([(positionAux[0] / 2), ((positionAux[2] / 2) + cameraDistance[0]), (positionAux[1] / 2) + cameraDistance[1]])
             //console.log([positionAux[0], (positionAux[2] + 1), (positionAux[1] + 5)])
 
         }

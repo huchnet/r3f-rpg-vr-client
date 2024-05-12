@@ -1,13 +1,13 @@
 
 import { Canvas } from '@react-three/fiber'
-import { Scene2 } from './components/Scene2'
+
 import { Scene } from './components/Scene'
 import { XR, VRButton, Controllers, TeleportationPlane, toggleSession, useXR } from '@react-three/xr'
 import { OrbitControls, KeyboardControls } from '@react-three/drei'
 import { Suspense, useMemo } from "react";
 import { UI } from "./components/UI";
 import { SocketManager } from "./components/SocketManager";
-import { vrSessionAtom } from './components/Global'
+
 import { useAtom } from "jotai";
 
 
@@ -37,14 +37,14 @@ function App() {
     { name: Controls.attack, keys: ["Space"] },
   ], [])
 
-  const [vrSession, setVRSession] = useAtom(vrSessionAtom);
+
 
   return (
     <>
       <SocketManager />
       <KeyboardControls map={keyMap} />
-      {/* <VRButton /> */}
-      <button
+      <VRButton />
+      {/* <button
         onClick={async () => {
           var session = await toggleSession('immersive-vr')
 
@@ -53,7 +53,7 @@ function App() {
 
         }}>
         ENTER VR
-      </button>
+      </button> */}
       <Canvas>
         <XR>
           <OrbitControls />
@@ -64,7 +64,7 @@ function App() {
           {/* <TeleportationPlane leftHand={false} rightHand={false} maxDistance={100} size={0.25} /> */}
         </XR>
       </Canvas>
-      {/* <UI /> */}
+      <UI />
     </>
 
   )
